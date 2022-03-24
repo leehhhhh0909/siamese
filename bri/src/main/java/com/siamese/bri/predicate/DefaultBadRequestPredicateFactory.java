@@ -1,6 +1,7 @@
 package com.siamese.bri.predicate;
 
 import com.siamese.bri.exception.BadRequestException;
+import com.siamese.bri.predicate.context.BadRequestPredicateContext;
 import com.siamese.bri.property.BadRequestProperties;
 import org.springframework.beans.factory.ObjectProvider;
 import java.util.Collections;
@@ -25,10 +26,9 @@ public class DefaultBadRequestPredicateFactory implements BadRequestPredicateFac
 
     private AtomicBoolean locked = new AtomicBoolean(false);
 
-    DefaultBadRequestPredicateFactory(ObjectProvider<List<BadRequestPredicate>> provider,
-                                      ObjectProvider<List<BadRequestPredicateFactoryCustomizer>> customizers,
+    public DefaultBadRequestPredicateFactory(List<BadRequestPredicate> provider,
                                       BadRequestProperties properties){
-        this.predicates = provider.getIfAvailable();
+        this.predicates = provider;
         this.predicateMode = generatePredicateMode(properties.getPredicateMode());
         this.mappingPredicate = (PredicateMode.STRICT.equals(predicateMode))?(Object::equals):
                 (keyClass, targetClass) -> keyClass.equals(targetClass) ||
@@ -66,7 +66,7 @@ public class DefaultBadRequestPredicateFactory implements BadRequestPredicateFac
     }
 
 
-
+    @Override
     public void registerPredicate(BadRequestPredicate predicate){
         if(predicate == null)
             throw new UnsupportedOperationException("BadRequestPredicate can not be null");
@@ -88,21 +88,22 @@ public class DefaultBadRequestPredicateFactory implements BadRequestPredicateFac
         }
     }
 
+    @Override
+    public BadRequestPredicateContext getPredicatesContext(Class<?> clazz){
+        return new BadRequestPredicateContext(this.predicatesMapping.get(clazz));
+    }
 
-
-    public void lock(){
+    @Override
+    public int lock(){
         if(!locked.get()){
             this.predicatesMapping = Collections.unmodifiableMap(this.predicatesMapping);
             this.predicates = Collections.unmodifiableList(this.predicates);
             locked.set(true);
+            return predicates.size();
         }
+        throw new UnsupportedOperationException("BadRequestPredicateFactory has been locked!");
     }
 
-
-    @SuppressWarnings("rawtypes")
-    List<BadRequestPredicate> getPredicates(Class<?> clazz){
-        return predicates;
-    }
 
     public List<BadRequestPredicate> getPredicates() {
         return predicates;
