@@ -3,7 +3,6 @@ package com.siamese.bri.predicate;
 import com.siamese.bri.exception.BadRequestException;
 import com.siamese.bri.predicate.context.BadRequestPredicateContext;
 import com.siamese.bri.property.BadRequestProperties;
-import org.springframework.beans.factory.ObjectProvider;
 import java.util.Collections;
 import java.util.List;
 

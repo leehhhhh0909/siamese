@@ -13,7 +13,8 @@ import java.lang.annotation.Target;
 public @interface BadRequestInterceptor {
     /**
      * 配置处理无效请求的方法(配置 全类名.方法名)
-     * 声明callback方法的类必须被spring容器管理
+     * 声明callback方法的类必须被spring容器管理/有默认构造方法。
+     * 且参数列表和原方法一致
      */
     String fallback() default "";
 

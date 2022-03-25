@@ -11,6 +11,16 @@ public class BadRequestProperties extends Properties {
 
     private String badRequestNamespace;
 
+    private boolean methodMappingCacheLazily;
+
+    public boolean isMethodMappingCacheLazily() {
+        return methodMappingCacheLazily;
+    }
+
+    public void setMethodMappingCacheLazily(boolean methodMappingCacheLazily) {
+        this.methodMappingCacheLazily = methodMappingCacheLazily;
+    }
+
     public String getBadRequestNamespace() {
         return badRequestNamespace;
     }

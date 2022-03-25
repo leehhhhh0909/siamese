@@ -38,4 +38,9 @@ public class RedisBadRequestHandler implements BadRequestHandler {
     public Object flush() {
         return null;
     }
+
+
+    public String getNamespace(){
+        return this.NAME_SPACE;
+    }
 }
