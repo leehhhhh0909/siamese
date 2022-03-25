@@ -1,16 +1,14 @@
-package com.siamese.bri.predicate.context;
+package com.siamese.bri.predicate;
 
-import com.siamese.bri.predicate.BadRequestDecidable;
-import com.siamese.bri.predicate.BadRequestPredicate;
 
 import java.util.List;
 
 @SuppressWarnings({"rawtypes","unchecked"})
-public class BadRequestPredicateContext implements BadRequestDecidable {
+public class BadRequestPredicateGroup implements BadRequestDecidable {
 
     private List<BadRequestPredicate> predicates;
 
-    public BadRequestPredicateContext(List<BadRequestPredicate> predicates){
+    public BadRequestPredicateGroup(List<BadRequestPredicate> predicates){
         this.predicates = predicates;
     }
 

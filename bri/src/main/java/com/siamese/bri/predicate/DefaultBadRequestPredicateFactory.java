@@ -1,7 +1,6 @@
 package com.siamese.bri.predicate;
 
 import com.siamese.bri.exception.BadRequestException;
-import com.siamese.bri.predicate.context.BadRequestPredicateContext;
 import com.siamese.bri.property.BadRequestProperties;
 import java.util.Collections;
 import java.util.List;
@@ -19,16 +18,14 @@ public class DefaultBadRequestPredicateFactory implements BadRequestPredicateFac
 
     private Map<Class<?>,List<BadRequestPredicate>> predicatesMapping;
 
-    private PredicateMode predicateMode;
-
     private BuildPredicatesMappingPredicate mappingPredicate;
 
     private AtomicBoolean locked = new AtomicBoolean(false);
 
-    public DefaultBadRequestPredicateFactory(List<BadRequestPredicate> provider,
+    public DefaultBadRequestPredicateFactory(List<BadRequestPredicate> predicates,
                                       BadRequestProperties properties){
-        this.predicates = provider;
-        this.predicateMode = generatePredicateMode(properties.getPredicateMode());
+        this.predicates = predicates;
+        PredicateMode predicateMode = generatePredicateMode(properties.getPredicateMode());
         this.mappingPredicate = (PredicateMode.STRICT.equals(predicateMode))?(Object::equals):
                 (keyClass, targetClass) -> keyClass.equals(targetClass) ||
                         targetClass.isAssignableFrom(keyClass);
@@ -88,8 +85,13 @@ public class DefaultBadRequestPredicateFactory implements BadRequestPredicateFac
     }
 
     @Override
-    public BadRequestPredicateContext getPredicatesContext(Class<?> clazz){
-        return new BadRequestPredicateContext(this.predicatesMapping.get(clazz));
+    public BadRequestDecidable getBadRequestDecider(Class<?> clazz){
+        List<BadRequestPredicate> badRequestPredicates = this.predicatesMapping.get(clazz);
+        if(badRequestPredicates == null || badRequestPredicates.isEmpty()){
+            return NotBadRequestDecider.getDecider();
+        }
+        return badRequestPredicates.size() == 1?badRequestPredicates.get(0):
+                new BadRequestPredicateGroup(badRequestPredicates);
     }
 
     @Override
@@ -113,10 +115,6 @@ public class DefaultBadRequestPredicateFactory implements BadRequestPredicateFac
         return predicatesMapping;
     }
 
-
-    public PredicateMode getPredicateMode() {
-        return predicateMode;
-    }
 
     @FunctionalInterface
     interface BuildPredicatesMappingPredicate{
