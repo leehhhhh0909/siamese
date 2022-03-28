@@ -1,4 +1,4 @@
-package com.siamese.bri.cache;
+package com.siamese.bri.cache.collector;
 
 import java.lang.reflect.Method;
 import java.util.List;

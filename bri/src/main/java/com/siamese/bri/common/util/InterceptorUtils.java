@@ -1,4 +1,6 @@
-package com.siamese.bri.cache;
+package com.siamese.bri.common.util;
+
+import com.siamese.bri.annotation.BadRequestInterceptor;
 
 import java.lang.reflect.Method;
 
@@ -8,7 +10,7 @@ public final class InterceptorUtils {
     }
 
 
-    static String getFallbackMappingName(String fallback,Class<?>[] parameterTypes) {
+    public static String getFallbackMappingName(String fallback,Class<?>[] parameterTypes) {
         StringBuilder stringBuilder = new StringBuilder(fallback);
         for(Class<?> clazz:parameterTypes){
             stringBuilder.append(".").append(clazz.getSimpleName());
@@ -18,7 +20,7 @@ public final class InterceptorUtils {
 
 
 
-    static Method getFallbackMethod(String fallback,Class<?>[] parameterTypes) throws ClassNotFoundException, NoSuchMethodException {
+    public static Method getFallbackMethod(String fallback,Class<?>[] parameterTypes) throws ClassNotFoundException, NoSuchMethodException {
         String[] split = fallback.split("\\.");
         StringBuilder stringBuilder = new StringBuilder();
         for(int i = 0;i<split.length-1;i++){
@@ -27,5 +29,12 @@ public final class InterceptorUtils {
         String classPath = stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
         Class<?> clazz = Class.forName(classPath);
         return clazz.getMethod(split[split.length-1],parameterTypes);
+    }
+
+
+
+
+    public static boolean hasFallback(BadRequestInterceptor interceptor){
+        return !interceptor.fallback().isEmpty();
     }
 }

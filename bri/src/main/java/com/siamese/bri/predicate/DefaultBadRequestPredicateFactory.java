@@ -1,5 +1,6 @@
 package com.siamese.bri.predicate;
 
+import com.siamese.bri.common.enumeration.PredicateModeEnum;
 import com.siamese.bri.exception.BadRequestException;
 import com.siamese.bri.property.BadRequestProperties;
 import java.util.Collections;
@@ -25,16 +26,16 @@ public class DefaultBadRequestPredicateFactory implements BadRequestPredicateFac
     public DefaultBadRequestPredicateFactory(List<BadRequestPredicate> predicates,
                                       BadRequestProperties properties){
         this.predicates = predicates;
-        PredicateMode predicateMode = generatePredicateMode(properties.getPredicateMode());
-        this.mappingPredicate = (PredicateMode.STRICT.equals(predicateMode))?(Object::equals):
+        PredicateModeEnum predicateMode = generatePredicateMode(properties.getPredicateMode());
+        this.mappingPredicate = (PredicateModeEnum.STRICT.equals(predicateMode))?(Object::equals):
                 (keyClass, targetClass) -> keyClass.equals(targetClass) ||
                         targetClass.isAssignableFrom(keyClass);
         this.predicatesMapping = buildPredicatesMapping(this.mappingPredicate);
     }
 
-    private PredicateMode generatePredicateMode(String predicateMode) {
-        PredicateMode mode = PredicateMode.getMode(predicateMode);
-        return Objects.nonNull(mode)? mode : PredicateMode.STRICT;
+    private PredicateModeEnum generatePredicateMode(String predicateMode) {
+        PredicateModeEnum mode = PredicateModeEnum.getMode(predicateMode);
+        return Objects.nonNull(mode)? mode : PredicateModeEnum.STRICT;
     }
 
     private Map<Class<?>,List<BadRequestPredicate>> buildPredicatesMapping(BuildPredicatesMappingPredicate mappingPredicate){
@@ -88,7 +89,7 @@ public class DefaultBadRequestPredicateFactory implements BadRequestPredicateFac
     public BadRequestDecidable getBadRequestDecider(Class<?> clazz){
         List<BadRequestPredicate> badRequestPredicates = this.predicatesMapping.get(clazz);
         if(badRequestPredicates == null || badRequestPredicates.isEmpty()){
-            return NotBadRequestDecider.getDecider();
+            return NonBadRequestDecider.getDecider();
         }
         return badRequestPredicates.size() == 1?badRequestPredicates.get(0):
                 new BadRequestPredicateGroup(badRequestPredicates);

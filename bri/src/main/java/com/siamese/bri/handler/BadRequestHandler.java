@@ -6,7 +6,7 @@ public interface BadRequestHandler {
      * 在目标方法执行之前要执行的方法
      * 入参为 切点方法
      */
-    Object handleBefore(ProceedingJoinPoint point) throws IllegalAccessException, NoSuchMethodException, ClassNotFoundException;
+    boolean needIntercept(ProceedingJoinPoint point);
 
     /**
      * 在目标方法执行之后要执行的方法

@@ -1,14 +1,13 @@
 package com.siamese.bri.cache;
 
-import java.lang.reflect.Method;
-import java.util.List;
+import com.siamese.bri.annotation.BadRequestInterceptor;
 import java.util.Map;
 
 public interface BadRequestCacheMapping<T> {
-
-    T get(String key);
-
-    Map<String,T> getMapping(List<Method> targetMethods) throws NoSuchMethodException, ClassNotFoundException;
+    T get(BadRequestInterceptor interceptor, Class<?>[] params) throws NoSuchMethodException,
+            ClassNotFoundException;
 
     void lock(Map<String,T> mapping);
+
+    void doBuild() throws NoSuchMethodException, ClassNotFoundException;
 }

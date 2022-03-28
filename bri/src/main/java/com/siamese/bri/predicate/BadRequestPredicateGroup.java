@@ -18,7 +18,7 @@ public class BadRequestPredicateGroup implements BadRequestDecidable {
 
     @Override
     public boolean isBadRequest(Object result){
-        if(this.predicates == null || this.predicates.isEmpty()) return false;
+        if(this.predicates == null) return false;
         for(BadRequestPredicate predicate:predicates){
             if(predicate.isBadRequest(result)) return true;
         }

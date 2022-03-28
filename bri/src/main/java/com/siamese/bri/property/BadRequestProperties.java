@@ -7,11 +7,21 @@ import java.util.Properties;
 
 @ConfigurationProperties(prefix = "bri")
 public class BadRequestProperties extends Properties {
+    /**
+     * 可选值: inherit/strict(默认)
+     */
     private String predicateMode;
 
     private String badRequestNamespace;
 
     private boolean methodMappingCacheLazily;
+
+    /**
+     * 可选值: hash/string(默认)
+     */
+    private String keyGenePolicy;
+
+
 
     public boolean isMethodMappingCacheLazily() {
         return methodMappingCacheLazily;

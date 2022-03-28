@@ -1,4 +1,4 @@
-package com.siamese.bri.util;
+package com.siamese.bri.common.util;
 
 import java.util.Objects;
 

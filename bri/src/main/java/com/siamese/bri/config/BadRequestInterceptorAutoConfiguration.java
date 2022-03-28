@@ -2,6 +2,10 @@ package com.siamese.bri.config;
 
 
 import com.siamese.bri.aspectj.BadRequestAspectJ;
+import com.siamese.bri.cache.BadRequestCacheMapping;
+import com.siamese.bri.cache.FallbackMethodDefaultCacheMapping;
+import com.siamese.bri.cache.FallbackMethodLazyCacheMapping;
+import com.siamese.bri.cache.collector.TargetMethodCollector;
 import com.siamese.bri.handler.BadRequestHandler;
 import com.siamese.bri.handler.DefaultBadRequestHandler;
 import com.siamese.bri.handler.RedisBadRequestHandler;
@@ -17,6 +21,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -88,6 +93,19 @@ public class BadRequestInterceptorAutoConfiguration {
     }
 
 
+
+    @Configuration
+    @ConditionalOnMissingBean(BadRequestCacheMapping.class)
+    private static class OnBadRequestCacheMappingMissing {
+
+        @Bean
+        public BadRequestCacheMapping badRequestCacheMapping(TargetMethodCollector collector,
+                                                             BadRequestProperties properties) {
+            return properties.isMethodMappingCacheLazily() ? new FallbackMethodLazyCacheMapping(collector) :
+                    new FallbackMethodDefaultCacheMapping(collector);
+        }
+
+    }
 
 
 

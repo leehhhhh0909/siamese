@@ -20,8 +20,8 @@ public class RedisBadRequestHandler implements BadRequestHandler {
 
 
     @Override
-    public Object handleBefore(ProceedingJoinPoint point) throws IllegalAccessException, NoSuchMethodException, ClassNotFoundException {
-        return null;
+    public boolean needIntercept(ProceedingJoinPoint point) {
+        return false;
     }
 
     @Override
