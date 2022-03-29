@@ -4,7 +4,7 @@ package com.siamese.bri.predicate;
 public class NonBadRequestDecider implements BadRequestDecidable {
 
 
-    private static NonBadRequestDecider decider;
+    private volatile static NonBadRequestDecider decider;
 
     private NonBadRequestDecider(){
 
