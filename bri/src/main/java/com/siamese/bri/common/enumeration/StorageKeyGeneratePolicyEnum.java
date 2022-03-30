@@ -24,4 +24,9 @@ public enum StorageKeyGeneratePolicyEnum {
         }
         return null;
     }
+
+
+    public String getCode() {
+        return code;
+    }
 }

@@ -13,6 +13,7 @@ import org.springframework.util.ClassUtils;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -25,6 +26,11 @@ public final class ReflectionUtils {
     public static <T extends Annotation> T getAnnotationFromMethod(Method method, Class<T> clazz){
         ObjectUtils.nonNull("method and the class of An annotation must be not null!", method, clazz);
         return method.getAnnotation(clazz);
+    }
+
+    public static <T extends Annotation> T getAnnotationFromField(Field field, Class<T> clazz) {
+        ObjectUtils.nonNull("field and the class of An annotation must be not null!", field, clazz);
+        return field.getAnnotation(clazz);
     }
 
 

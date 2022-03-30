@@ -9,6 +9,7 @@ import com.siamese.bri.exception.InvalidFallbackException;
 import com.siamese.bri.exception.NoSuchFallbackClassException;
 import com.siamese.bri.handler.BadRequestHandler;
 import com.siamese.bri.metadata.InterceptorMetadata;
+import com.siamese.bri.predicate.BadRequestDecidable;
 import com.siamese.bri.predicate.BadRequestPredicateFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -40,14 +41,47 @@ public class BadRequestAspectJ extends ApplicationContextHolder {
     }
 
     @Around("@annotation(com.siamese.bri.annotation.BadRequestInterceptor)")
+    @SuppressWarnings({"rawtypes","unchecked"})
     public Object handleBadRequest(ProceedingJoinPoint joinPoint) throws Throwable {
         Method sourceMethod = ReflectionUtils.getSourceMethodByJoinPoint(joinPoint);
         BadRequestInterceptor interceptor = ReflectionUtils.getAnnotationFromMethod(sourceMethod, BadRequestInterceptor.class);
         if(handler.needIntercept(joinPoint)){
             return doIntercept(joinPoint,interceptor,sourceMethod);
         }
-        return null;
+        Object originalResult = null;
+        boolean isBadRequest;
+        Throwable error = null;
+        try{
+            originalResult = joinPoint.proceed();
+            BadRequestDecidable badRequestDecider = factory.getBadRequestDecider(originalResult.getClass());
+            isBadRequest = badRequestDecider.isBadRequest(originalResult);
+        }catch (Throwable cause){
+            error = cause;
+            isBadRequest = inTargetException(cause.getClass(), interceptor.targetException());
+        }
+        if(isBadRequest) handler.record(joinPoint);
+        if(Objects.nonNull(error)) throw error;
+        return originalResult;
     }
+
+
+
+
+
+
+    private boolean inTargetException(Class<? extends Throwable> cause,Class<? extends Exception> [] exClazz){
+        if(cause == null || exClazz == null || exClazz.length == 0) return false;
+        for(Class<? extends Exception> clazz :exClazz){
+            if(cause.equals(clazz) || cause.isAssignableFrom(cause)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+
 
 
 

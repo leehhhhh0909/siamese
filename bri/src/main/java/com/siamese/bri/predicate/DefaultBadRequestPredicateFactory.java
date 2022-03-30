@@ -86,7 +86,7 @@ public class DefaultBadRequestPredicateFactory implements BadRequestPredicateFac
     }
 
     @Override
-    public BadRequestDecidable getBadRequestDecider(Class<?> clazz){
+    public BadRequestDecidable getBadRequestDecider(Class<?> clazz) {
         List<BadRequestPredicate> badRequestPredicates = this.predicatesMapping.get(clazz);
         if(badRequestPredicates == null || badRequestPredicates.isEmpty()){
             return NonBadRequestDecider.getDecider();

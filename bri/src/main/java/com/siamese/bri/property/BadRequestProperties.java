@@ -46,4 +46,12 @@ public class BadRequestProperties extends Properties {
     public void setPredicateMode(String predicateMode) {
         this.predicateMode = predicateMode;
     }
+
+    public String getKeyGenePolicy() {
+        return keyGenePolicy;
+    }
+
+    public void setKeyGenePolicy(String keyGenePolicy) {
+        this.keyGenePolicy = keyGenePolicy;
+    }
 }

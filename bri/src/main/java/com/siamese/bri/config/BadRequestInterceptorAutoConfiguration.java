@@ -6,6 +6,10 @@ import com.siamese.bri.cache.BadRequestCacheMapping;
 import com.siamese.bri.cache.FallbackMethodDefaultCacheMapping;
 import com.siamese.bri.cache.FallbackMethodLazyCacheMapping;
 import com.siamese.bri.cache.collector.TargetMethodCollector;
+import com.siamese.bri.common.enumeration.StorageKeyGeneratePolicyEnum;
+import com.siamese.bri.generator.BadRequestParamGenerator;
+import com.siamese.bri.generator.HashBadRequestParamGenerator;
+import com.siamese.bri.generator.StringifyBadRequestParamGenerator;
 import com.siamese.bri.handler.BadRequestHandler;
 import com.siamese.bri.handler.DefaultBadRequestHandler;
 import com.siamese.bri.handler.RedisBadRequestHandler;
@@ -21,12 +25,12 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.util.StringUtils;
 
 
 import java.util.ArrayList;
@@ -105,6 +109,24 @@ public class BadRequestInterceptorAutoConfiguration {
                     new FallbackMethodDefaultCacheMapping(collector);
         }
 
+    }
+
+
+
+    @Configuration
+    @ConditionalOnMissingBean(BadRequestParamGenerator.class)
+    private static class OnBadRequestParamGeneratorMissing {
+
+        @Bean
+        public BadRequestParamGenerator badRequestParamGenerator(BadRequestProperties properties){
+            String keyGenePolicy = properties.getKeyGenePolicy();
+            if(StringUtils.hasText(keyGenePolicy)){
+                if(StorageKeyGeneratePolicyEnum.HASH.getCode().equals(keyGenePolicy.toLowerCase())){
+                    return new HashBadRequestParamGenerator();
+                }
+            }
+            return new StringifyBadRequestParamGenerator();
+        }
     }
 
 
