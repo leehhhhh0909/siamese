@@ -1,6 +1,6 @@
 package com.siamese.bri.generator;
 
-import com.siamese.bri.common.BadRequestParamWrapper;
+import com.siamese.bri.common.model.BadRequestParamWrapper;
 
 public interface BadRequestParamGenerator {
 

@@ -1,7 +1,7 @@
 package com.siamese.bri.common.util;
 
 import com.siamese.bri.annotation.BadRequestInterceptor;
-import com.siamese.bri.constants.StringConstants;
+import com.siamese.bri.common.constants.StringConstants;
 
 import java.lang.reflect.Method;
 

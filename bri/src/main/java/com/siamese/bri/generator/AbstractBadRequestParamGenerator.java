@@ -1,9 +1,9 @@
 package com.siamese.bri.generator;
 
 import com.siamese.bri.annotation.BadRequestProperty;
-import com.siamese.bri.common.BadRequestParamWrapper;
+import com.siamese.bri.common.model.BadRequestParamWrapper;
 import com.siamese.bri.common.util.ReflectionUtils;
-import com.siamese.bri.constants.StringConstants;
+import com.siamese.bri.common.constants.StringConstants;
 import com.siamese.bri.identifier.BadRequestIdentifier;
 
 import java.lang.reflect.Field;

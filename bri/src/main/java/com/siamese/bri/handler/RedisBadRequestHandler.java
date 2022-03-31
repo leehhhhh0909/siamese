@@ -1,10 +1,11 @@
 package com.siamese.bri.handler;
 
+import com.siamese.bri.generator.BadRequestStorageKeyGenerator;
 import com.siamese.bri.property.BadRequestProperties;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-public class RedisBadRequestHandler implements BadRequestHandler {
+public class RedisBadRequestHandler extends AbstractBadRequestHandler {
 
     private String NAME_SPACE;
 
@@ -13,7 +14,9 @@ public class RedisBadRequestHandler implements BadRequestHandler {
 
 
     public RedisBadRequestHandler(BadRequestProperties properties,
-                                  StringRedisTemplate stringRedisTemplate){
+                                  StringRedisTemplate stringRedisTemplate,
+                                  BadRequestStorageKeyGenerator generator){
+        super(generator);
         this.redisTemplate = stringRedisTemplate;
         this.NAME_SPACE = properties.getBadRequestNamespace();
     }
@@ -22,11 +25,6 @@ public class RedisBadRequestHandler implements BadRequestHandler {
     @Override
     public boolean needIntercept(ProceedingJoinPoint point) {
         return false;
-    }
-
-    @Override
-    public Object handleAfter(ProceedingJoinPoint point) {
-        return null;
     }
 
     @Override
@@ -42,5 +40,10 @@ public class RedisBadRequestHandler implements BadRequestHandler {
 
     public String getNamespace(){
         return this.NAME_SPACE;
+    }
+
+    @Override
+    protected Object postHandle(ProceedingJoinPoint point) {
+        return null;
     }
 }

@@ -1,6 +1,4 @@
-package com.siamese.bri.constants;
-
-import java.util.Arrays;
+package com.siamese.bri.common.constants;
 
 public final class StringConstants {
 

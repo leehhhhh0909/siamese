@@ -1,9 +1,14 @@
-package com.siamese.bri.common;
+package com.siamese.bri.common.model;
 
 public class BadRequestParamWrapper {
     private Object param;
 
     private boolean allOf;
+
+    public BadRequestParamWrapper(Object param, boolean allOf) {
+        this.param = param;
+        this.allOf = allOf;
+    }
 
     public Object getParam() {
         return param;
@@ -20,4 +25,5 @@ public class BadRequestParamWrapper {
     public void setAllOf(boolean allOf) {
         this.allOf = allOf;
     }
+
 }

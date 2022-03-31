@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -31,6 +32,11 @@ public final class ReflectionUtils {
     public static <T extends Annotation> T getAnnotationFromField(Field field, Class<T> clazz) {
         ObjectUtils.nonNull("field and the class of An annotation must be not null!", field, clazz);
         return field.getAnnotation(clazz);
+    }
+
+    public static <T extends Annotation> T getAnnotationFromParameter(Parameter parameter ,Class<T> clazz) {
+        ObjectUtils.nonNull("parameter and the class of An annotation must be not null!", parameter, clazz);
+        return parameter.getAnnotation(clazz);
     }
 
 

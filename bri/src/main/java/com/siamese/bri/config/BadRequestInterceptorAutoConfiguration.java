@@ -8,6 +8,7 @@ import com.siamese.bri.cache.FallbackMethodLazyCacheMapping;
 import com.siamese.bri.cache.collector.TargetMethodCollector;
 import com.siamese.bri.common.enumeration.StorageKeyGeneratePolicyEnum;
 import com.siamese.bri.generator.BadRequestParamGenerator;
+import com.siamese.bri.generator.BadRequestStorageKeyGenerator;
 import com.siamese.bri.generator.HashBadRequestParamGenerator;
 import com.siamese.bri.generator.StringifyBadRequestParamGenerator;
 import com.siamese.bri.handler.BadRequestHandler;
@@ -50,11 +51,12 @@ public class BadRequestInterceptorAutoConfiguration {
     private static class OnBadRequestHandlerMissing {
         @Bean
         public BadRequestHandler badRequestHandler(StringRedisTemplate redisTemplate,
-                                                   BadRequestProperties properties){
+                                                   BadRequestProperties properties,
+                                                   BadRequestStorageKeyGenerator generator){
             if(Objects.nonNull(redisTemplate)){
-                return new RedisBadRequestHandler(properties,redisTemplate);
+                return new RedisBadRequestHandler(properties,redisTemplate,generator);
             }
-            return new DefaultBadRequestHandler();
+            return new DefaultBadRequestHandler(generator);
         }
     }
 
@@ -129,8 +131,17 @@ public class BadRequestInterceptorAutoConfiguration {
         }
     }
 
+    @Configuration
+    private static class BadRequestParamGeneratorAutoConfiguration {
 
-
+        @Bean
+        public BadRequestParamGenerator badRequestParamGenerator(BadRequestProperties badRequestProperties){
+            if(StorageKeyGeneratePolicyEnum.HASH.equals(StorageKeyGeneratePolicyEnum.getPolicy(badRequestProperties.getKeyGenePolicy()))){
+                return new HashBadRequestParamGenerator();
+            }
+            return new StringifyBadRequestParamGenerator();
+        }
+    }
 
 
 
