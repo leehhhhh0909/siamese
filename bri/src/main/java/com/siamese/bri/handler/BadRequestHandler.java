@@ -4,7 +4,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 
 public interface BadRequestHandler {
 
-    boolean needIntercept(ProceedingJoinPoint point);
+    boolean needIntercept(ProceedingJoinPoint point,int tolerance) throws IllegalAccessException;
 
     Object handleAfter(ProceedingJoinPoint point);
 

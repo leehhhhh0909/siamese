@@ -30,7 +30,7 @@ public class FallbackMethodLazyCacheMapping extends FallbackMethodCacheMapping {
         }
         Method fallbackMethod = InterceptorUtils.getFallbackMethod(interceptor.fallback(), params);
         InterceptorMetadata metadata = InterceptorMetadata.analyze(fallbackMethod, params, interceptor);
-        getFallbackMethodMapping().put(fallbackMappingName,metadata);
+        getFallbackMethodMapping().putIfAbsent(fallbackMappingName,metadata);
         return metadata;
     }
 }

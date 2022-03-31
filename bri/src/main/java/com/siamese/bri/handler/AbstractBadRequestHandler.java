@@ -36,6 +36,22 @@ public abstract class AbstractBadRequestHandler implements BadRequestHandler{
         return postHandle(point);
     }
 
+    @Override
+    public boolean needIntercept(ProceedingJoinPoint point,int tolerance) throws IllegalAccessException {
+        StorageKey storageKey = getStorageKey(point);
+        int count = getCurrentInterceptionCount(storageKey);
+        return count >= tolerance;
+    }
+
+    @Override
+    public Object record(ProceedingJoinPoint point) throws IllegalAccessException {
+        StorageKey storageKey = getStorageKey(point);
+        return increaseBy(storageKey);
+    }
+
+    protected abstract Object increaseBy(StorageKey storageKey);
+
+    protected abstract int getCurrentInterceptionCount(StorageKey storageKey);
 
     protected abstract Object postHandle(ProceedingJoinPoint point);
 }

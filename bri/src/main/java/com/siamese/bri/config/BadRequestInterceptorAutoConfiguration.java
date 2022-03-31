@@ -25,6 +25,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
@@ -63,7 +64,7 @@ public class BadRequestInterceptorAutoConfiguration {
 
     @Configuration
     @AutoConfigureBefore(OnBadRequestPredicateFactoryMissing.class)
-    @ConditionalOnMissingBean(BadRequestPredicateFactory.class)
+    @ConditionalOnBean(BadRequestPredicateFactory.class)
     private static class OnBadRequestPredicateFactoryExisting implements InitializingBean {
 
         @Autowired
@@ -75,7 +76,7 @@ public class BadRequestInterceptorAutoConfiguration {
         @Override
         public void afterPropertiesSet() throws Exception {
             factoryCustomizers.forEach(customizer -> customizer.customize(badRequestPredicateFactory));
-            badRequestPredicateFactory.lock();
+            logger.info("The initialization of BadRequestPredicateFactory is done,and the size of BadRequestPredicateFactory is:{}",badRequestPredicateFactory.lock());
         }
     }
 
@@ -130,19 +131,5 @@ public class BadRequestInterceptorAutoConfiguration {
             return new StringifyBadRequestParamGenerator();
         }
     }
-
-    @Configuration
-    private static class BadRequestParamGeneratorAutoConfiguration {
-
-        @Bean
-        public BadRequestParamGenerator badRequestParamGenerator(BadRequestProperties badRequestProperties){
-            if(StorageKeyGeneratePolicyEnum.HASH.equals(StorageKeyGeneratePolicyEnum.getPolicy(badRequestProperties.getKeyGenePolicy()))){
-                return new HashBadRequestParamGenerator();
-            }
-            return new StringifyBadRequestParamGenerator();
-        }
-    }
-
-
 
 }

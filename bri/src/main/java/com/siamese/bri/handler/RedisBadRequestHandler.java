@@ -1,9 +1,15 @@
 package com.siamese.bri.handler;
 
+import com.siamese.bri.common.constants.StringConstants;
+import com.siamese.bri.common.model.StorageKey;
 import com.siamese.bri.generator.BadRequestStorageKeyGenerator;
 import com.siamese.bri.property.BadRequestProperties;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.util.StringUtils;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 public class RedisBadRequestHandler extends AbstractBadRequestHandler {
 
@@ -18,23 +24,42 @@ public class RedisBadRequestHandler extends AbstractBadRequestHandler {
                                   BadRequestStorageKeyGenerator generator){
         super(generator);
         this.redisTemplate = stringRedisTemplate;
-        this.NAME_SPACE = properties.getBadRequestNamespace();
+        this.NAME_SPACE = StringUtils.hasText(properties.getBadRequestNamespace()) ?
+                properties.getBadRequestNamespace() : ("BRI_"+ UUID.randomUUID().toString().replaceAll("-",""));
     }
 
 
     @Override
-    public boolean needIntercept(ProceedingJoinPoint point) {
-        return false;
+    protected int getCurrentInterceptionCount(StorageKey storageKey) {
+        if(!StringUtils.hasText(storageKey.getMethodKey())){
+            return 0;
+        }
+        Object count = redisTemplate.opsForHash().get(NAME_SPACE,
+                storageKey.getMethodKey()+ StringConstants.SEPARATOR+storageKey.getParamKey());
+        if(Objects.nonNull(count)) {
+            return (int) count;
+        }
+        return 0;
     }
 
     @Override
-    public Object record(ProceedingJoinPoint point) throws IllegalAccessException {
-        return null;
+    protected Object increaseBy(StorageKey storageKey) {
+        //todo 并发问题
+        if(redisTemplate.opsForHash().hasKey(NAME_SPACE,
+                storageKey.getMethodKey() + StringConstants.SEPARATOR + storageKey.getParamKey())) {
+            return redisTemplate.opsForHash().increment(NAME_SPACE,
+                    storageKey.getMethodKey() + StringConstants.SEPARATOR + storageKey.getParamKey(), 1);
+        }
+        redisTemplate.opsForHash().put(NAME_SPACE,
+                storageKey.getMethodKey() + StringConstants.SEPARATOR + storageKey.getParamKey(), 1);
+        return 1L;
     }
 
     @Override
     public Object flush() {
-        return null;
+        //todo 并发处理
+        Set<Object> keys = redisTemplate.opsForHash().keys(NAME_SPACE);
+        return redisTemplate.opsForHash().delete(NAME_SPACE,keys);
     }
 
 

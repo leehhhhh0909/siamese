@@ -45,7 +45,7 @@ public class BadRequestAspectJ extends ApplicationContextHolder {
     public Object handleBadRequest(ProceedingJoinPoint joinPoint) throws Throwable {
         Method sourceMethod = ReflectionUtils.getSourceMethodByJoinPoint(joinPoint);
         BadRequestInterceptor interceptor = ReflectionUtils.getAnnotationFromMethod(sourceMethod, BadRequestInterceptor.class);
-        if(handler.needIntercept(joinPoint)){
+        if(handler.needIntercept(joinPoint,interceptor.tolerance())){
             return doIntercept(joinPoint,interceptor,sourceMethod);
         }
         Object originalResult = null;
@@ -60,7 +60,11 @@ public class BadRequestAspectJ extends ApplicationContextHolder {
             isBadRequest = inTargetException(cause.getClass(), interceptor.targetException());
         }
         if(isBadRequest) handler.record(joinPoint);
-        if(Objects.nonNull(error)) throw error;
+        if(Objects.nonNull(error)) {
+            handler.handleAfter(joinPoint);
+            throw error;
+        }
+        handler.handleAfter(joinPoint);
         return originalResult;
     }
 
@@ -98,14 +102,17 @@ public class BadRequestAspectJ extends ApplicationContextHolder {
                 invocationBean = ReflectionUtils.newInstance(declaringClass);
             }
             if(Objects.isNull(invocationBean)){
+                handler.handleAfter(joinPoint);
                 throw new NoSuchFallbackClassException(String.format("fail to get an instance of class: %s",declaringClass.getName()));
             }
             handler.handleAfter(joinPoint);
             return fallBackMethod.invoke(invocationBean,joinPoint.getArgs());
         }
         if(String.class.equals(sourceMethod.getReturnType())){
+            handler.handleAfter(joinPoint);
             return interceptor.defaultMessage();
         }
+        handler.handleAfter(joinPoint);
         throw new InvalidFallbackException(String.format("the fallback and defaultMessage of method:[ %s ] is invalid",
                 sourceMethod.getName()));
     }
