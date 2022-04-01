@@ -2,11 +2,9 @@ package com.siamese.bri.property;
 
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-@Component
 @ConfigurationProperties(prefix = "bri")
 public class BadRequestProperties{
 

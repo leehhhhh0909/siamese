@@ -41,6 +41,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
@@ -49,6 +50,17 @@ import java.util.List;
 public class BadRequestInterceptorAutoConfiguration {
 
     public static final Logger logger = LoggerFactory.getLogger(BadRequestInterceptorAutoConfiguration.class);
+
+
+
+    @Configuration
+    public static class BadRequestPropertiesAutoConfiguration {
+        @Bean
+        public BadRequestProperties badRequestProperties(){
+            return new BadRequestProperties();
+        }
+    }
+
 
 
 
@@ -108,21 +120,22 @@ public class BadRequestInterceptorAutoConfiguration {
 
 
 
-
     @Configuration
-    @AutoConfigureBefore(OnBadRequestPredicateFactoryMissing.class)
     @ConditionalOnBean(BadRequestPredicateFactory.class)
     public static class OnBadRequestPredicateFactoryExisting implements InitializingBean {
 
         @Autowired
         BadRequestPredicateFactory badRequestPredicateFactory;
 
-        @Autowired
+        @Autowired(required = false)
         List<BadRequestPredicateFactoryCustomizer> factoryCustomizers;
 
         @Override
-        public void afterPropertiesSet() throws Exception {
-            factoryCustomizers.forEach(customizer -> customizer.customize(badRequestPredicateFactory));
+        public void afterPropertiesSet() {
+            if(DefaultBadRequestPredicateFactory.class.equals(badRequestPredicateFactory.getClass())) return;
+            if(Objects.nonNull(factoryCustomizers) && !factoryCustomizers.isEmpty()) {
+                factoryCustomizers.forEach(customizer -> customizer.customize(badRequestPredicateFactory));
+            }
             logger.info("The initialization of BadRequestPredicateFactory is done,and the size of BadRequestPredicateFactory is:{}",badRequestPredicateFactory.lock());
         }
     }
