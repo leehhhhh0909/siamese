@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 
-@Configuration
-@ConditionalOnMissingBean(TargetMethodCollector.class)
 public class DefaultAnnotatedMethodCollector  extends ApplicationContextHolder implements TargetMethodCollector {
 
     @Override

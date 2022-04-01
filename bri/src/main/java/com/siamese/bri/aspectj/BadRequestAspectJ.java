@@ -53,13 +53,14 @@ public class BadRequestAspectJ extends ApplicationContextHolder {
         Throwable error = null;
         try{
             originalResult = joinPoint.proceed();
-            BadRequestDecidable badRequestDecider = factory.getBadRequestDecider(originalResult.getClass());
+            Class<?> resultClass = Objects.nonNull(originalResult) ? originalResult.getClass() : Void.TYPE;
+            BadRequestDecidable badRequestDecider = factory.getBadRequestDecider(resultClass);
             isBadRequest = badRequestDecider.isBadRequest(originalResult);
         }catch (Throwable cause){
             error = cause;
             isBadRequest = inTargetException(cause.getClass(), interceptor.targetException());
         }
-        if(isBadRequest) handler.record(joinPoint);
+        if(isBadRequest) handler.record(joinPoint,interceptor.expireTime());
         if(Objects.nonNull(error)) {
             handler.handleAfter(joinPoint);
             throw error;

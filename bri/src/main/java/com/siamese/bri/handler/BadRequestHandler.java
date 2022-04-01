@@ -8,7 +8,7 @@ public interface BadRequestHandler {
 
     Object handleAfter(ProceedingJoinPoint point);
 
-    Object record(ProceedingJoinPoint point) throws IllegalAccessException;
+    Object record(ProceedingJoinPoint point,long expireTime) throws IllegalAccessException;
 
     Object flush();
 

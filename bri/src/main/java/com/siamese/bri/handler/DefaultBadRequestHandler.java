@@ -3,15 +3,20 @@ package com.siamese.bri.handler;
 import com.siamese.bri.cache.record.MemoryInterceptorCache;
 import com.siamese.bri.common.model.StorageKey;
 import com.siamese.bri.generator.BadRequestStorageKeyGenerator;
+import com.siamese.bri.property.BadRequestProperties;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.util.StringUtils;
 
 
 public class DefaultBadRequestHandler extends AbstractBadRequestHandler {
 
-    public DefaultBadRequestHandler(BadRequestStorageKeyGenerator generator) {
+    private BadRequestProperties properties;
+
+    public DefaultBadRequestHandler(BadRequestStorageKeyGenerator generator,
+                                    BadRequestProperties properties) {
         super(generator);
-        MemoryInterceptorCache.initialize();
+        this.properties = properties;
+        MemoryInterceptorCache.initialize(properties);
     }
 
 
@@ -29,8 +34,8 @@ public class DefaultBadRequestHandler extends AbstractBadRequestHandler {
     }
 
     @Override
-    protected Object increaseBy(StorageKey storageKey) {
-        return MemoryInterceptorCache.increase(storageKey.getMethodKey(),storageKey.getParamKey());
+    protected Object increaseBy(StorageKey storageKey,long expireTime) {
+        return MemoryInterceptorCache.increase(storageKey.getMethodKey(),storageKey.getParamKey(),expireTime);
     }
 
     @Override

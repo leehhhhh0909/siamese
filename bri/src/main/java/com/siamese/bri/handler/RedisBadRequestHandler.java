@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.StringUtils;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class RedisBadRequestHandler extends AbstractBadRequestHandler {
 
@@ -17,15 +17,17 @@ public class RedisBadRequestHandler extends AbstractBadRequestHandler {
 
     private StringRedisTemplate redisTemplate;
 
+    private BadRequestProperties properties;
+
 
 
     public RedisBadRequestHandler(BadRequestProperties properties,
                                   StringRedisTemplate stringRedisTemplate,
                                   BadRequestStorageKeyGenerator generator){
         super(generator);
+        this.properties = properties;
         this.redisTemplate = stringRedisTemplate;
-        this.NAME_SPACE = StringUtils.hasText(properties.getBadRequestNamespace()) ?
-                properties.getBadRequestNamespace() : ("BRI_"+ UUID.randomUUID().toString().replaceAll("-",""));
+        this.NAME_SPACE = properties.getBadRequestNamespace();
     }
 
 
@@ -34,7 +36,7 @@ public class RedisBadRequestHandler extends AbstractBadRequestHandler {
         if(!StringUtils.hasText(storageKey.getMethodKey())){
             return 0;
         }
-        Object count = redisTemplate.opsForHash().get(NAME_SPACE,
+        Object count = redisTemplate.opsForValue().get(NAME_SPACE+
                 storageKey.getMethodKey()+ StringConstants.SEPARATOR+storageKey.getParamKey());
         if(Objects.nonNull(count)) {
             return (int) count;
@@ -43,23 +45,27 @@ public class RedisBadRequestHandler extends AbstractBadRequestHandler {
     }
 
     @Override
-    protected Object increaseBy(StorageKey storageKey) {
-        //todo 并发问题
-        if(redisTemplate.opsForHash().hasKey(NAME_SPACE,
-                storageKey.getMethodKey() + StringConstants.SEPARATOR + storageKey.getParamKey())) {
-            return redisTemplate.opsForHash().increment(NAME_SPACE,
-                    storageKey.getMethodKey() + StringConstants.SEPARATOR + storageKey.getParamKey(), 1);
+    protected Object increaseBy(StorageKey storageKey,long expireTime) {
+        String redisKey = NAME_SPACE + storageKey.getMethodKey() + StringConstants.SEPARATOR + storageKey.getParamKey();
+        redisTemplate.opsForValue().setIfAbsent(redisKey, "0", expireTime, TimeUnit.MILLISECONDS);
+        Long increment = redisTemplate.opsForValue().increment(redisKey, 1);
+        if(Objects.nonNull(increment) && increment >1 && properties.isResetExpireTimeOnBadRequest()){
+            redisTemplate.expire(redisKey,expireTime,TimeUnit.MILLISECONDS);
         }
-        redisTemplate.opsForHash().put(NAME_SPACE,
-                storageKey.getMethodKey() + StringConstants.SEPARATOR + storageKey.getParamKey(), 1);
-        return 1L;
+        return increment;
     }
 
     @Override
     public Object flush() {
-        //todo 并发处理
-        Set<Object> keys = redisTemplate.opsForHash().keys(NAME_SPACE);
-        return redisTemplate.opsForHash().delete(NAME_SPACE,keys);
+        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent("BAD_REQUEST_INTERCEPTOR_FLUSH_LOCK", StringConstants.EMPTY, properties.getFlushWaitTime(),
+                TimeUnit.MILLISECONDS);
+        if(Objects.nonNull(setIfAbsent) && setIfAbsent){
+            Set<String> keys = redisTemplate.keys(NAME_SPACE);
+            if(Objects.nonNull(keys) && !keys.isEmpty()) {
+                return redisTemplate.delete(keys);
+            }
+        }
+        return 0;
     }
 
 

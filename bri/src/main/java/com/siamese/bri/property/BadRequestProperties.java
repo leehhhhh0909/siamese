@@ -2,33 +2,34 @@ package com.siamese.bri.property;
 
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
-import java.util.Properties;
+import java.util.UUID;
 
+@Component
 @ConfigurationProperties(prefix = "bri")
-public class BadRequestProperties extends Properties {
-    /**
-     * 可选值: inherit/strict(默认)
-     */
-    private String predicateMode;
+public class BadRequestProperties{
 
-    private String badRequestNamespace;
+    private String predicateMode = "strict";
 
-    private boolean methodMappingCacheLazily;
+    private String badRequestNamespace = "BRI_"+ UUID.randomUUID().toString().replaceAll("-","")+"_";
 
-    /**
-     * 可选值: hash/string(默认)
-     */
-    private String keyGenePolicy;
+    private boolean methodMappingCacheLazily = false;
 
+    private String keyGenePolicy = "string";
 
+    private long flushWaitTime = 10000L;
 
-    public boolean isMethodMappingCacheLazily() {
-        return methodMappingCacheLazily;
+    private boolean resetExpireTimeOnBadRequest = false;
+
+    private long checkIntervalOnMemoryCache = 10000L;
+
+    public String getPredicateMode() {
+        return predicateMode;
     }
 
-    public void setMethodMappingCacheLazily(boolean methodMappingCacheLazily) {
-        this.methodMappingCacheLazily = methodMappingCacheLazily;
+    public void setPredicateMode(String predicateMode) {
+        this.predicateMode = predicateMode;
     }
 
     public String getBadRequestNamespace() {
@@ -39,12 +40,12 @@ public class BadRequestProperties extends Properties {
         this.badRequestNamespace = badRequestNamespace;
     }
 
-    public String getPredicateMode() {
-        return predicateMode;
+    public boolean isMethodMappingCacheLazily() {
+        return methodMappingCacheLazily;
     }
 
-    public void setPredicateMode(String predicateMode) {
-        this.predicateMode = predicateMode;
+    public void setMethodMappingCacheLazily(boolean methodMappingCacheLazily) {
+        this.methodMappingCacheLazily = methodMappingCacheLazily;
     }
 
     public String getKeyGenePolicy() {
@@ -53,5 +54,29 @@ public class BadRequestProperties extends Properties {
 
     public void setKeyGenePolicy(String keyGenePolicy) {
         this.keyGenePolicy = keyGenePolicy;
+    }
+
+    public long getFlushWaitTime() {
+        return flushWaitTime;
+    }
+
+    public void setFlushWaitTime(long flushWaitTime) {
+        this.flushWaitTime = flushWaitTime;
+    }
+
+    public boolean isResetExpireTimeOnBadRequest() {
+        return resetExpireTimeOnBadRequest;
+    }
+
+    public void setResetExpireTimeOnBadRequest(boolean resetExpireTimeOnBadRequest) {
+        this.resetExpireTimeOnBadRequest = resetExpireTimeOnBadRequest;
+    }
+
+    public long getCheckIntervalOnMemoryCache() {
+        return checkIntervalOnMemoryCache;
+    }
+
+    public void setCheckIntervalOnMemoryCache(long checkIntervalOnMemoryCache) {
+        this.checkIntervalOnMemoryCache = checkIntervalOnMemoryCache;
     }
 }

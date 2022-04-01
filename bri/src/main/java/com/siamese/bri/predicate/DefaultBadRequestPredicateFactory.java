@@ -3,6 +3,9 @@ package com.siamese.bri.predicate;
 import com.siamese.bri.common.enumeration.PredicateModeEnum;
 import com.siamese.bri.exception.BadRequestException;
 import com.siamese.bri.property.BadRequestProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,26 +22,21 @@ public class DefaultBadRequestPredicateFactory implements BadRequestPredicateFac
 
     private Map<Class<?>,List<BadRequestPredicate>> predicatesMapping;
 
-    private BuildPredicatesMappingPredicate mappingPredicate;
+    private BadRequestProperties properties;
+
+    private boolean inheritLyGet;
 
     private AtomicBoolean locked = new AtomicBoolean(false);
 
     public DefaultBadRequestPredicateFactory(List<BadRequestPredicate> predicates,
-                                      BadRequestProperties properties){
-        this.predicates = predicates;
-        PredicateModeEnum predicateMode = generatePredicateMode(properties.getPredicateMode());
-        this.mappingPredicate = (PredicateModeEnum.STRICT.equals(predicateMode))?(Object::equals):
-                (keyClass, targetClass) -> keyClass.equals(targetClass) ||
-                        targetClass.isAssignableFrom(keyClass);
-        this.predicatesMapping = buildPredicatesMapping(this.mappingPredicate);
+                                             BadRequestProperties properties){
+        this.predicates = Objects.isNull(predicates) ? new CopyOnWriteArrayList<>() : predicates;
+        this.properties = properties;
+        this.inheritLyGet = PredicateModeEnum.INHERIT.equals(PredicateModeEnum.getMode(this.properties.getPredicateMode()));
+        this.predicatesMapping = buildPredicatesMapping();
     }
 
-    private PredicateModeEnum generatePredicateMode(String predicateMode) {
-        PredicateModeEnum mode = PredicateModeEnum.getMode(predicateMode);
-        return Objects.nonNull(mode)? mode : PredicateModeEnum.STRICT;
-    }
-
-    private Map<Class<?>,List<BadRequestPredicate>> buildPredicatesMapping(BuildPredicatesMappingPredicate mappingPredicate){
+    private Map<Class<?>,List<BadRequestPredicate>> buildPredicatesMapping(){
         Map<Class<?>, List<BadRequestPredicate>> mapping = new ConcurrentHashMap<>();
         if(predicates != null && !predicates.isEmpty()) {
             for (BadRequestPredicate predicate : predicates) {
@@ -48,7 +46,7 @@ public class DefaultBadRequestPredicateFactory implements BadRequestPredicateFac
                 }
                 for (Map.Entry<Class<?>, List<BadRequestPredicate>> entry : mapping.entrySet()) {
                     Class<?> keyClass = entry.getKey();
-                    if (mappingPredicate.test(keyClass, targetClass)) {
+                    if (targetClass.equals(keyClass)) {
                         entry.getValue().add(predicate);
                     }
                 }
@@ -74,7 +72,7 @@ public class DefaultBadRequestPredicateFactory implements BadRequestPredicateFac
         }
         for(Map.Entry<Class<?>, List<BadRequestPredicate>> entry : this.predicatesMapping.entrySet()){
             Class<?> keyClass = entry.getKey();
-            if(this.mappingPredicate.test(keyClass,targetClass)){
+            if(targetClass.equals(keyClass)){
                 entry.getValue().add(predicate);
             }
         }
@@ -87,12 +85,27 @@ public class DefaultBadRequestPredicateFactory implements BadRequestPredicateFac
 
     @Override
     public BadRequestDecidable getBadRequestDecider(Class<?> clazz) {
-        List<BadRequestPredicate> badRequestPredicates = this.predicatesMapping.get(clazz);
+        List<BadRequestPredicate> badRequestPredicates = getPredicatesByClass(clazz);
         if(badRequestPredicates == null || badRequestPredicates.isEmpty()){
             return NonBadRequestDecider.getDecider();
         }
         return badRequestPredicates.size() == 1?badRequestPredicates.get(0):
                 new BadRequestPredicateGroup(badRequestPredicates);
+    }
+
+
+
+    private List<BadRequestPredicate> getPredicatesByClass(Class<?> clazz) {
+        if(inheritLyGet){
+            List<BadRequestPredicate> list = new ArrayList<>();
+            for(Map.Entry<Class<?>,List<BadRequestPredicate>> entry : predicatesMapping.entrySet()) {
+                if(clazz.equals(entry.getKey()) || entry.getKey().isAssignableFrom(clazz)) {
+                    list.addAll(entry.getValue());
+                }
+            }
+            return list;
+        }
+        return this.predicatesMapping.get(clazz);
     }
 
     @Override
@@ -106,19 +119,23 @@ public class DefaultBadRequestPredicateFactory implements BadRequestPredicateFac
         throw new UnsupportedOperationException("BadRequestPredicateFactory has been locked!");
     }
 
+    public BadRequestProperties getProperties() {
+        return properties;
+    }
+
+    public boolean isLocked() {
+        return locked.get();
+    }
 
     public List<BadRequestPredicate> getPredicates() {
         return predicates;
     }
 
+    public boolean isInheritLyGet() {
+        return inheritLyGet;
+    }
 
     public Map<Class<?>, List<BadRequestPredicate>> getPredicatesMapping() {
         return predicatesMapping;
-    }
-
-
-    @FunctionalInterface
-    interface BuildPredicatesMappingPredicate{
-        boolean test(Class<?> keyClass,Class<?> targetClass);
     }
 }

@@ -44,12 +44,12 @@ public abstract class AbstractBadRequestHandler implements BadRequestHandler{
     }
 
     @Override
-    public Object record(ProceedingJoinPoint point) throws IllegalAccessException {
+    public Object record(ProceedingJoinPoint point,long expireTime) throws IllegalAccessException {
         StorageKey storageKey = getStorageKey(point);
-        return increaseBy(storageKey);
+        return increaseBy(storageKey,expireTime);
     }
 
-    protected abstract Object increaseBy(StorageKey storageKey);
+    protected abstract Object increaseBy(StorageKey storageKey,long expireTime);
 
     protected abstract int getCurrentInterceptionCount(StorageKey storageKey);
 

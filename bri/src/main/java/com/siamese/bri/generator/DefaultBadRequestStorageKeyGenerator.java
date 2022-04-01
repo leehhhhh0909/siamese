@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Component
-@ConditionalOnMissingBean(BadRequestStorageKeyGenerator.class)
 public class DefaultBadRequestStorageKeyGenerator implements BadRequestStorageKeyGenerator {
 
 
@@ -25,7 +23,7 @@ public class DefaultBadRequestStorageKeyGenerator implements BadRequestStorageKe
 
 
     @Autowired
-    DefaultBadRequestStorageKeyGenerator(BadRequestParamGenerator paramGenerator) {
+    public DefaultBadRequestStorageKeyGenerator(BadRequestParamGenerator paramGenerator) {
         this.paramGenerator = paramGenerator;
     }
 
