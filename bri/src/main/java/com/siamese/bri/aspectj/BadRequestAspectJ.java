@@ -16,7 +16,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -69,11 +68,6 @@ public class BadRequestAspectJ extends ApplicationContextHolder {
         return originalResult;
     }
 
-
-
-
-
-
     private boolean inTargetException(Class<? extends Throwable> cause,Class<? extends Exception> [] exClazz){
         if(cause == null || exClazz == null || exClazz.length == 0) return false;
         for(Class<? extends Exception> clazz :exClazz){
@@ -83,12 +77,6 @@ public class BadRequestAspectJ extends ApplicationContextHolder {
         }
         return false;
     }
-
-
-
-
-
-
 
     private Object doIntercept(ProceedingJoinPoint joinPoint, BadRequestInterceptor interceptor,Method sourceMethod) throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException {
         if(InterceptorUtils.hasFallback(interceptor)){

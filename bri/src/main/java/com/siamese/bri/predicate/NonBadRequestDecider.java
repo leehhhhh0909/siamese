@@ -3,7 +3,6 @@ package com.siamese.bri.predicate;
 @SuppressWarnings("rawtypes")
 public class NonBadRequestDecider implements BadRequestDecidable {
 
-
     private volatile static NonBadRequestDecider decider;
 
     private NonBadRequestDecider(){

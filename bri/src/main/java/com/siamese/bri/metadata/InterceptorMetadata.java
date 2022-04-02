@@ -2,7 +2,6 @@ package com.siamese.bri.metadata;
 
 import com.siamese.bri.annotation.BadRequestInterceptor;
 import org.springframework.util.StringUtils;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -92,7 +91,6 @@ public class InterceptorMetadata{
         this.parameterTypes = parameterTypes;
     }
 
-
     public static InterceptorMetadata analyze(Method fallbackMethod,Class<?>[] parameterTypes,BadRequestInterceptor interceptor) {
         if(StringUtils.hasText(interceptor.fallback()) && Objects.nonNull(fallbackMethod)){
             return  new InterceptorMetadata(fallbackMethod, parameterTypes,interceptor.tolerance(),interceptor.targetException(),
@@ -101,7 +99,6 @@ public class InterceptorMetadata{
         return new InterceptorMetadata(interceptor.tolerance(),interceptor.defaultMessage(),interceptor.targetException(),
                 interceptor.expireTime());
     }
-
 
     public BadRequestInterceptor transfer(){
         return new BadRequestInterceptor(){
@@ -138,7 +135,6 @@ public class InterceptorMetadata{
             }
         };
     }
-
 
     @Override
     public boolean equals(Object o) {

@@ -1,6 +1,5 @@
 package com.siamese.bri.common.enumeration;
 
-
 import org.springframework.util.StringUtils;
 
 
@@ -8,9 +7,7 @@ public enum PredicateModeEnum {
 
     INHERIT("inherit"),
 
-
     STRICT("strict");
-
 
     private String code;
 

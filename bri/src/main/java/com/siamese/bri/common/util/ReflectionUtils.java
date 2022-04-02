@@ -10,7 +10,6 @@ import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.ClassUtils;
-
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class ReflectionUtils {
+
     private ReflectionUtils() {
         throw new UnsupportedOperationException("can not create an instance of utility class");
     }
@@ -39,7 +39,6 @@ public final class ReflectionUtils {
         return parameter.getAnnotation(clazz);
     }
 
-
     public static Class<?>[] getParameters(Method method){
         ObjectUtils.nonNull("method and the class of An annotation must be not null!", method);
         return method.getParameterTypes();
@@ -53,7 +52,6 @@ public final class ReflectionUtils {
             return null;
         }
     }
-
 
     public static List<Method> methodsWithAnnotation(List<String> packagePathList, Class<? extends Annotation> annotationClass){
         List<Method> methodList = new CopyOnWriteArrayList<>();
@@ -87,8 +85,6 @@ public final class ReflectionUtils {
         }
         return methodList;
     }
-
-
 
     public static Method getSourceMethodByJoinPoint(ProceedingJoinPoint joinPoint) {
         MethodSignature methodSignature = (MethodSignature)joinPoint.getSignature();

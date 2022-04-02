@@ -4,7 +4,6 @@ import com.siamese.bri.annotation.BadRequestInterceptor;
 import com.siamese.bri.cache.collector.TargetMethodCollector;
 import com.siamese.bri.common.util.InterceptorUtils;
 import com.siamese.bri.metadata.InterceptorMetadata;
-
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,6 @@ public class FallbackMethodLazyCacheMapping extends FallbackMethodCacheMapping {
     public Map<String, InterceptorMetadata> initMapping(List<Method> targetMethods) {
         return new ConcurrentHashMap<>(256);
     }
-
 
     public FallbackMethodLazyCacheMapping(TargetMethodCollector collector) {
         super(collector);

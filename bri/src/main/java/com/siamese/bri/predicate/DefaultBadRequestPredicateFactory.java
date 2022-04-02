@@ -3,12 +3,9 @@ package com.siamese.bri.predicate;
 import com.siamese.bri.common.enumeration.PredicateModeEnum;
 import com.siamese.bri.exception.BadRequestException;
 import com.siamese.bri.property.BadRequestProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,7 +57,6 @@ public class DefaultBadRequestPredicateFactory implements BadRequestPredicateFac
         return mapping;
     }
 
-
     @Override
     public void registerPredicate(BadRequestPredicate predicate){
         if(predicate == null)
@@ -92,8 +88,6 @@ public class DefaultBadRequestPredicateFactory implements BadRequestPredicateFac
         return badRequestPredicates.size() == 1?badRequestPredicates.get(0):
                 new BadRequestPredicateGroup(badRequestPredicates);
     }
-
-
 
     private List<BadRequestPredicate> getPredicatesByClass(Class<?> clazz) {
         if(inheritLyGet){

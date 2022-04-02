@@ -3,10 +3,10 @@ package com.siamese.bri.common.util;
 import java.util.Objects;
 
 public final class ObjectUtils {
+
     private ObjectUtils() {
         throw new UnsupportedOperationException("can not create an instance of utility class");
     }
-
 
     public static void nonNull(String message,Object...objects){
         if(objects == null || objects.length == 0) return;

@@ -2,7 +2,6 @@ package com.siamese.bri.property;
 
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
 import java.util.UUID;
 
 @ConfigurationProperties(prefix = "bri")

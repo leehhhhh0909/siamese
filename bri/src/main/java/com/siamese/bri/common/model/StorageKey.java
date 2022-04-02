@@ -3,20 +3,18 @@ package com.siamese.bri.common.model;
 import java.util.Objects;
 
 public class StorageKey {
+
     private String methodKey;
 
     private String paramKey;
-
 
     public String getMethodKey() {
         return methodKey;
     }
 
-
     public String getParamKey() {
         return paramKey;
     }
-
 
     public StorageKey() {
     }

@@ -7,9 +7,6 @@ import com.siamese.bri.common.util.ObjectUtils;
 import com.siamese.bri.common.util.ReflectionUtils;
 import com.siamese.bri.common.constants.StringConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.stereotype.Component;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -18,9 +15,7 @@ import java.util.Objects;
 
 public class DefaultBadRequestStorageKeyGenerator implements BadRequestStorageKeyGenerator {
 
-
     private BadRequestParamGenerator paramGenerator;
-
 
     @Autowired
     public DefaultBadRequestStorageKeyGenerator(BadRequestParamGenerator paramGenerator) {

@@ -2,7 +2,6 @@ package com.siamese.bri.cache;
 
 import com.siamese.bri.cache.collector.TargetMethodCollector;
 import com.siamese.bri.metadata.InterceptorMetadata;
-
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +39,6 @@ public abstract class FallbackMethodCacheMapping implements BadRequestCacheMappi
         throw new UnsupportedOperationException("cache mapping has been initialized!");
     }
 
-
     @Override
     public void lock(Map<String, InterceptorMetadata> mapping) {
         if(!locked.get()){
@@ -54,7 +52,6 @@ public abstract class FallbackMethodCacheMapping implements BadRequestCacheMappi
     public Map<String, InterceptorMetadata> getFallbackMethodMapping() {
         return fallbackMethodMapping;
     }
-
 
     abstract Map<String,InterceptorMetadata> initMapping(List<Method> targetMethods) throws NoSuchMethodException, ClassNotFoundException;
 

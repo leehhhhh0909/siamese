@@ -1,6 +1,7 @@
 package com.siamese.bri.common.model;
 
 public class BadRequestParamWrapper {
+
     private Object param;
 
     private boolean allOf;

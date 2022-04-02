@@ -27,7 +27,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -37,8 +36,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.StringUtils;
-
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -51,23 +48,20 @@ public class BadRequestInterceptorAutoConfiguration {
 
     public static final Logger logger = LoggerFactory.getLogger(BadRequestInterceptorAutoConfiguration.class);
 
-
-
     @Configuration
     public static class BadRequestPropertiesAutoConfiguration {
+
         @Bean
         public BadRequestProperties badRequestProperties(){
             return new BadRequestProperties();
         }
     }
 
-
-
-
     @Configuration
     @ConditionalOnMissingBean(BadRequestParamGenerator.class)
     @AutoConfigureAfter(BadRequestProperties.class)
     public static class OnBadRequestParamGeneratorMissing {
+
         @Bean
         public BadRequestParamGenerator badRequestParamGenerator(BadRequestProperties properties){
             String keyGenePolicy = properties.getKeyGenePolicy();
@@ -80,23 +74,22 @@ public class BadRequestInterceptorAutoConfiguration {
         }
     }
 
-
     @Configuration
     @AutoConfigureAfter(OnBadRequestParamGeneratorMissing.class)
     public static class OnBadRequestStorageKeyGeneratorMissing {
+
         @Bean
         public BadRequestStorageKeyGenerator badRequestStorageKeyGenerator(BadRequestParamGenerator generator){
             return new DefaultBadRequestStorageKeyGenerator(generator);
         }
     }
 
-
-
     @Configuration
     @ConditionalOnMissingBean(BadRequestHandler.class)
     @AutoConfigureAfter(OnBadRequestStorageKeyGeneratorMissing.class)
     @ConditionalOnProperty(prefix = "spring",name = "redis")
     public static class RedisBadRequestHandlerAutoConfiguration {
+
         @Bean
         public BadRequestHandler badRequestHandler(StringRedisTemplate redisTemplate,
                                                    BadRequestProperties properties,
@@ -105,20 +98,17 @@ public class BadRequestInterceptorAutoConfiguration {
         }
     }
 
-
-
     @Configuration
     @ConditionalOnMissingBean(BadRequestHandler.class)
     @AutoConfigureAfter(OnBadRequestStorageKeyGeneratorMissing.class)
     public static class OnBadRequestHandlerMissing {
+
         @Bean
         public BadRequestHandler badRequestHandler(BadRequestProperties properties,
                                                    BadRequestStorageKeyGenerator generator){
             return new DefaultBadRequestHandler(generator,properties);
         }
     }
-
-
 
     @Configuration
     @ConditionalOnBean(BadRequestPredicateFactory.class)
@@ -140,9 +130,6 @@ public class BadRequestInterceptorAutoConfiguration {
         }
     }
 
-
-
-
     @Configuration
     @ConditionalOnMissingBean(BadRequestPredicateFactory.class)
     public static class OnBadRequestPredicateFactoryMissing {
@@ -159,7 +146,6 @@ public class BadRequestInterceptorAutoConfiguration {
         }
     }
 
-
     @Configuration
     @ConditionalOnMissingBean(TargetMethodCollector.class)
     public static class OnTargetMethodCollectorMissing {
@@ -171,13 +157,11 @@ public class BadRequestInterceptorAutoConfiguration {
 
     }
 
-
-
-
     @Configuration
     @ConditionalOnMissingBean(BadRequestCacheMapping.class)
     @AutoConfigureAfter({BadRequestProperties.class})
     public static class OnBadRequestCacheMappingMissing {
+
         @Bean
         public BadRequestCacheMapping badRequestCacheMapping(TargetMethodCollector collector,
                                                              BadRequestProperties properties) {

@@ -5,7 +5,6 @@ import com.siamese.bri.common.model.BadRequestParamWrapper;
 import com.siamese.bri.common.util.ReflectionUtils;
 import com.siamese.bri.common.constants.StringConstants;
 import com.siamese.bri.identifier.BadRequestIdentifier;
-
 import java.lang.reflect.Field;
 import java.util.Objects;
 

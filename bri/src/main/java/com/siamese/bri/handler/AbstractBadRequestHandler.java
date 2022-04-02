@@ -4,7 +4,6 @@ import com.siamese.bri.common.model.StorageKey;
 import com.siamese.bri.generator.BadRequestStorageKeyGenerator;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-
 import java.util.Objects;
 
 
@@ -28,7 +27,6 @@ public abstract class AbstractBadRequestHandler implements BadRequestHandler{
         localStorageKey.set(key);
         return key;
     }
-
 
     @Override
     public Object handleAfter(ProceedingJoinPoint point) {

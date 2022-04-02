@@ -4,9 +4,7 @@ import com.siamese.bri.annotation.BadRequestInterceptor;
 import com.siamese.bri.common.app.ApplicationContextHolder;
 import com.siamese.bri.common.util.ReflectionUtils;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -33,9 +31,6 @@ public class DefaultAnnotatedMethodCollector  extends ApplicationContextHolder i
         packages.add(bootClassName);
         return ReflectionUtils.methodsWithAnnotation(packages, BadRequestInterceptor.class);
     }
-
-
-
 
     private Class<?> getBootClass(){
         Map<String, Object> bootClass

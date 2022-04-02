@@ -19,8 +19,6 @@ public class RedisBadRequestHandler extends AbstractBadRequestHandler {
 
     private BadRequestProperties properties;
 
-
-
     public RedisBadRequestHandler(BadRequestProperties properties,
                                   StringRedisTemplate stringRedisTemplate,
                                   BadRequestStorageKeyGenerator generator){
