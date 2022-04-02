@@ -47,9 +47,15 @@ public abstract class AbstractBadRequestParamGenerator implements BadRequestPara
         return builder.toString();
     }
 
+    @Override
+    public Object getParamGeneration(Object param) {
+        if(param instanceof BadRequestIdentifier) {
+            return ((BadRequestIdentifier)param).getIdentifier();
+        }
+        return doGenerateByParam(param);
+    }
 
-
-
+    protected abstract Object doGenerateByParam(Object param);
 
     protected boolean inSpecialClass(Class<?> clazz) {
         return Integer.class.equals(clazz) ||
