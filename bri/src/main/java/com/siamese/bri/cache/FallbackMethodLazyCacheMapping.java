@@ -33,4 +33,8 @@ public class FallbackMethodLazyCacheMapping extends FallbackMethodCacheMapping {
         getFallbackMethodMapping().putIfAbsent(fallbackMappingName,metadata);
         return metadata;
     }
+
+    @Override
+    public void lock(Map<String, InterceptorMetadata> mapping) {
+    }
 }
