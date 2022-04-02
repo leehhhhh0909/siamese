@@ -566,7 +566,7 @@ protected abstract Object postHandle(ProceedingJoinPoint var1);
 
 #### 2.6.2 RedisBadRequestHandler
 
-RedisBadRequestHandler 是 AbstractBadRequestHandler 的子类。其核心逻辑都是通过 redis 来实现的。因此使用该类的处理器可以支持对分布式方法的访问拦截。
+RedisBadRequestHandler 是 AbstractBadRequestHandler 的子类。其核心逻辑都是通过 redis 来实现的。因此使用该类的处理器可以支持对分布式系统方法的访问拦截。
 
 通过 postHandle 方法默认是空实现的，如果需要其他请求拦截后续处理，可以通过继承该类重写 postHandle 方法的方式进行扩展。
 
