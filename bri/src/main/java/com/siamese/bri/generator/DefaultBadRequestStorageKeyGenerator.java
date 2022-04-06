@@ -30,7 +30,7 @@ public class DefaultBadRequestStorageKeyGenerator implements BadRequestStorageKe
         if(Objects.isNull(parameters) || parameters.length == 0) {
             return new StorageKey(methodPath,StringConstants.EMPTY);
         }
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(methodPath);
         int length = parameters.length;
         List<BadRequestParamWrapper> wrappers = new ArrayList<>();
         for(int i = 0;i<length;i++) {

@@ -61,10 +61,10 @@ public class BadRequestAspectJ extends ApplicationContextHolder {
         }
         if(isBadRequest) handler.record(joinPoint,interceptor.expireTime());
         if(Objects.nonNull(error)) {
-            handler.handleAfter(joinPoint);
+            handler.handleAfter(joinPoint,interceptor.expireTime());
             throw error;
         }
-        handler.handleAfter(joinPoint);
+        handler.handleAfter(joinPoint,interceptor.expireTime());
         return originalResult;
     }
 
@@ -91,17 +91,17 @@ public class BadRequestAspectJ extends ApplicationContextHolder {
                 invocationBean = ReflectionUtils.newInstance(declaringClass);
             }
             if(Objects.isNull(invocationBean)){
-                handler.handleAfter(joinPoint);
+                handler.handleAfter(joinPoint, interceptor.expireTime());
                 throw new NoSuchFallbackClassException(String.format("fail to get an instance of class: %s",declaringClass.getName()));
             }
-            handler.handleAfter(joinPoint);
+            handler.handleAfter(joinPoint, interceptor.expireTime());
             return fallBackMethod.invoke(invocationBean,joinPoint.getArgs());
         }
         if(String.class.equals(sourceMethod.getReturnType())){
-            handler.handleAfter(joinPoint);
+            handler.handleAfter(joinPoint, interceptor.expireTime());
             return interceptor.defaultMessage();
         }
-        handler.handleAfter(joinPoint);
+        handler.handleAfter(joinPoint, interceptor.expireTime());
         throw new InvalidFallbackException(String.format("the fallback and defaultMessage of method:[ %s ] is invalid",
                 sourceMethod.getName()));
     }

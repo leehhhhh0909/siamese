@@ -6,9 +6,11 @@ public interface BadRequestHandler {
 
     boolean needIntercept(ProceedingJoinPoint point,int tolerance) throws IllegalAccessException;
 
-    Object handleAfter(ProceedingJoinPoint point);
+    Object handleAfter(ProceedingJoinPoint point,long expireTime) throws IllegalAccessException;
 
     Object record(ProceedingJoinPoint point,long expireTime) throws IllegalAccessException;
+
+    Object resetExpireTime(ProceedingJoinPoint point,long expireTime) throws IllegalAccessException;
 
     Object flush();
 

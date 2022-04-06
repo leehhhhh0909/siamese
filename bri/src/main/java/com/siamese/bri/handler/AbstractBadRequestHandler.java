@@ -29,9 +29,16 @@ public abstract class AbstractBadRequestHandler implements BadRequestHandler{
     }
 
     @Override
-    public Object handleAfter(ProceedingJoinPoint point) {
+    public Object handleAfter(ProceedingJoinPoint point, long expireTime) throws IllegalAccessException {
+        this.resetExpireTime(point, expireTime);
         this.localStorageKey.remove();
         return postHandle(point);
+    }
+
+
+    @Override
+    public Object resetExpireTime(ProceedingJoinPoint point, long expireTime) throws IllegalAccessException {
+        return record(point, expireTime);
     }
 
     @Override
